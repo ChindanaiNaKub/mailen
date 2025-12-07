@@ -246,10 +246,18 @@
         badgeElement.id = 'chess-anticheat-badge';
         badgeElement.className = 'chess-anticheat-badge under-username loading';
 
-        badgeElement.innerHTML = `
-            <span class="risk-score" style="background-color: #888888; animation: pulse 1s infinite;">...</span>
-            <span class="risk-label">Analyzing</span>
-        `;
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'risk-score';
+        scoreSpan.style.backgroundColor = '#888888';
+        scoreSpan.style.animation = 'pulse 1s infinite';
+        scoreSpan.textContent = '...';
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'risk-label';
+        labelSpan.textContent = 'Analyzing';
+
+        badgeElement.appendChild(scoreSpan);
+        badgeElement.appendChild(labelSpan);
 
         badgeElement.title = 'Analyzing opponent...';
         insertTarget.insertAdjacentElement('afterend', badgeElement);
@@ -324,10 +332,17 @@
         const score = data.maxScore.value;
         const riskLevel = data.riskLevel;
 
-        badgeElement.innerHTML = `
-            <span class="risk-score" style="background-color: ${riskLevel.color}">${score}</span>
-            <span class="risk-label">${riskLevel.label}</span>
-        `;
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'risk-score';
+        scoreSpan.style.backgroundColor = riskLevel.color;
+        scoreSpan.textContent = score;
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'risk-label';
+        labelSpan.textContent = riskLevel.label;
+
+        badgeElement.appendChild(scoreSpan);
+        badgeElement.appendChild(labelSpan);
 
         badgeElement.title = `Risk Score: ${score}\nFormat: ${data.maxScore.format || 'N/A'}\nAccount Age: ${data.accountAgeDays} days`;
 

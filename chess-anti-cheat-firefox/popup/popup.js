@@ -158,20 +158,34 @@ async function loadHistory() {
  */
 function displayHistory(history) {
     const historyList = document.getElementById('history-list');
+    historyList.textContent = ''; // Clear existing content safely
 
     if (!history || history.length === 0) {
-        historyList.innerHTML = '<p class="empty-history">No opponents analyzed yet</p>';
+        const emptyMsg = document.createElement('p');
+        emptyMsg.className = 'empty-history';
+        emptyMsg.textContent = 'No opponents analyzed yet';
+        historyList.appendChild(emptyMsg);
         return;
     }
 
-    historyList.innerHTML = history.slice(0, 10).map(item => `
-        <div class="history-item" data-username="${item.username}">
-            <span class="history-username">${item.username}</span>
-            <span class="history-score" style="background-color: ${item.riskLevel.color}">
-                ${item.score}
-            </span>
-        </div>
-    `).join('');
+    history.slice(0, 10).forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.dataset.username = item.username;
+
+        const usernameSpan = document.createElement('span');
+        usernameSpan.className = 'history-username';
+        usernameSpan.textContent = item.username;
+
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'history-score';
+        scoreSpan.style.backgroundColor = item.riskLevel.color;
+        scoreSpan.textContent = item.score;
+
+        historyItem.appendChild(usernameSpan);
+        historyItem.appendChild(scoreSpan);
+        historyList.appendChild(historyItem);
+    });
 
     // Add click handlers
     historyList.querySelectorAll('.history-item').forEach(item => {
