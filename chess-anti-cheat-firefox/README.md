@@ -24,9 +24,21 @@
 - **⚙️ Configurable Thresholds** - Customize risk level boundaries via options page
 - **📱 SPA Navigation Support** - Works across Chess.com's single-page app navigation
 
-## 📸 Screenshot
+## 📸 Screenshots
 
 The extension displays a color-coded risk badge directly on the game page:
+
+<div align="center">
+
+![Risk Badge on Game Page](assets/showcase1.png)
+
+*Real-time risk badge displayed next to opponent's username*
+
+![Popup Details](assets/showcase2.png)
+
+*Detailed statistics popup with risk breakdown*
+
+</div>
 
 | Risk Level | Score Range | Color |
 |------------|-------------|-------|

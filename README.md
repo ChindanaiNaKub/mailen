@@ -24,9 +24,21 @@
 - **⚙️ Configurable Thresholds** - Customize risk level boundaries via options page
 - **📱 SPA Navigation Support** - Works across Chess.com's single-page app navigation
 
-## 📸 Screenshot
+## 📸 Screenshots
 
 The extension displays a color-coded risk badge directly on the game page:
+
+<div align="center">
+
+![Risk Badge on Game Page](chess-anti-cheat-firefox/assets/showcase1.png)
+
+*Real-time risk badge displayed next to opponent's username*
+
+![Popup Details](chess-anti-cheat-firefox/assets/showcase2.png)
+
+*Detailed statistics popup with risk breakdown*
+
+</div>
 
 | Risk Level | Score Range | Color |
 |------------|-------------|-------|
@@ -171,7 +183,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](chess-anti-cheat-firefox/LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
