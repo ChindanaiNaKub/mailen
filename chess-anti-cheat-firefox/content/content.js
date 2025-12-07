@@ -74,16 +74,22 @@
      * Extract opponent username from the page
      */
     function extractOpponentUsername() {
-        // Try various selectors used by chess.com
+        // Try various selectors used by chess.com (including new cc- prefixed classes)
         const selectors = [
+            // New chess.com selectors (cc- prefix)
+            '.board-player-default-top .cc-user-username-component',
+            '.board-layout-player-top .cc-user-username-component',
             // Live game opponent (top of board)
             '.board-player-default-top .user-username-component',
             '.board-layout-player-top .user-username-component',
             // Alternative selectors
             '[data-cy="player-top"] .user-username-component',
+            '[data-cy="player-top"] .cc-user-username-component',
             '.player-top .user-username-component',
+            '.player-top .cc-user-username-component',
             // Game page headers
-            '.game-header-user-top .user-username-component'
+            '.game-header-user-top .user-username-component',
+            '.game-header-user-top .cc-user-username-component'
         ];
 
         for (const selector of selectors) {
@@ -96,8 +102,8 @@
             }
         }
 
-        // Fallback: look for any username components and find the opponent
-        const allUsernames = document.querySelectorAll('.user-username-component');
+        // Fallback: look for any username components (both old and new classes)
+        const allUsernames = document.querySelectorAll('.user-username-component, .cc-user-username-component');
         for (const el of allUsernames) {
             const username = el.textContent?.trim();
             if (username && !isOwnUsername(username)) {
@@ -110,17 +116,60 @@
 
     /**
      * Check if username is the current user (to filter out)
+     * The user is always displayed at the BOTTOM of the board
      */
     function isOwnUsername(username) {
-        // Try to get logged in username from page
-        const profileLink = document.querySelector('a[href*="/member/"]');
-        if (profileLink) {
-            const href = profileLink.getAttribute('href');
-            const match = href.match(/\/member\/([^/?]+)/);
-            if (match && match[1].toLowerCase() === username.toLowerCase()) {
+        // Find all username elements
+        const allUsernames = document.querySelectorAll('.cc-user-username-component, .user-username-component');
+
+        if (allUsernames.length < 2) {
+            return false; // Can't determine if we don't have both players
+        }
+
+        // Find the element for this username
+        let thisElement = null;
+        for (const el of allUsernames) {
+            if (el.textContent?.trim().toLowerCase() === username.toLowerCase()) {
+                thisElement = el;
+                break;
+            }
+        }
+
+        if (!thisElement) return false;
+
+        // Get the position of this element
+        const thisRect = thisElement.getBoundingClientRect();
+
+        // Find the board element to determine the middle point
+        const board = document.querySelector('.board, [class*="board-layout"], .chessboard');
+
+        if (board) {
+            const boardRect = board.getBoundingClientRect();
+            const boardMiddle = boardRect.top + (boardRect.height / 2);
+
+            // If this element is below the board middle, it's the user (bottom player)
+            if (thisRect.top > boardMiddle) {
+                return true;
+            }
+        } else {
+            // Fallback: compare positions of all username elements
+            // The bottom-most username is the current user
+            let maxY = -Infinity;
+            let bottomElement = null;
+
+            for (const el of allUsernames) {
+                const rect = el.getBoundingClientRect();
+                if (rect.top > maxY) {
+                    maxY = rect.top;
+                    bottomElement = el;
+                }
+            }
+
+            if (bottomElement && bottomElement.textContent?.trim().toLowerCase() === username.toLowerCase()) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -148,20 +197,41 @@
     function displayRiskBadge(data) {
         removeBadge();
 
-        // Find opponent name element to attach badge near
-        const opponentEl = document.querySelector(
+        // Find opponent name element to attach badge near (support both old and new classes)
+        let opponentEl = document.querySelector(
+            '.board-player-default-top .cc-user-username-component, ' +
             '.board-player-default-top .user-username-component, ' +
+            '.board-layout-player-top .cc-user-username-component, ' +
             '.board-layout-player-top .user-username-component'
         );
 
-        if (!opponentEl) return;
+        // Fallback: find by matching the opponent's username text
+        if (!opponentEl && lastOpponent) {
+            const allUsernames = document.querySelectorAll('.cc-user-username-component, .user-username-component');
+            for (const el of allUsernames) {
+                if (el.textContent?.trim() === lastOpponent) {
+                    opponentEl = el;
+                    break;
+                }
+            }
+        }
 
-        const parent = opponentEl.closest('.board-player-default-top, .board-layout-player-top');
-        if (!parent) return;
+        if (!opponentEl) {
+            console.log('Chess.com Anti-Cheat: Could not find opponent element for badge');
+            return;
+        }
+
+        // Find the best parent container
+        let targetParent = opponentEl.closest('.board-player-default-top, .board-layout-player-top');
+        if (!targetParent) {
+            // Try to find a suitable parent
+            targetParent = opponentEl.parentElement?.parentElement || opponentEl.parentElement;
+        }
+        if (!targetParent) return;
 
         badgeElement = document.createElement('div');
         badgeElement.id = 'chess-anticheat-badge';
-        badgeElement.className = 'chess-anticheat-badge';
+        badgeElement.className = 'chess-anticheat-badge under-username';
 
         const score = data.maxScore.value;
         const riskLevel = data.riskLevel;
@@ -173,8 +243,11 @@
 
         badgeElement.title = `Risk Score: ${score}\nFormat: ${data.maxScore.format || 'N/A'}\nAccount Age: ${data.accountAgeDays} days`;
 
-        parent.style.position = 'relative';
-        parent.appendChild(badgeElement);
+        targetParent.style.position = 'relative';
+        targetParent.style.overflow = 'visible';
+        targetParent.appendChild(badgeElement);
+
+        console.log('Chess.com Anti-Cheat: Badge displayed for', data.username || 'opponent');
     }
 
     /**

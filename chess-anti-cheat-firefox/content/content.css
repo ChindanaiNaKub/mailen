@@ -49,6 +49,7 @@
         opacity: 0;
         transform: translateY(-50%) translateX(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(-50%) translateX(0);
@@ -67,14 +68,60 @@
     .chess-anticheat-badge {
         right: 4px;
     }
-    
+
     .chess-anticheat-badge .risk-score {
         width: 28px;
         height: 28px;
         font-size: 11px;
     }
-    
+
     .chess-anticheat-badge .risk-label {
         display: none;
+    }
+}
+
+/* Under Username Badge Style */
+.chess-anticheat-badge.under-username {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    top: auto;
+    transform: none;
+    right: auto;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 3px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+}
+
+.chess-anticheat-badge.under-username .risk-score {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+    min-width: 18px;
+}
+
+.chess-anticheat-badge.under-username .risk-label {
+    font-size: 9px;
+    padding: 0;
+    background: transparent;
+    color: #fff;
+}
+
+/* Animation for under-username badge */
+.chess-anticheat-badge.under-username {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
