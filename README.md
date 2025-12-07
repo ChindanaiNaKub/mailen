@@ -10,6 +10,14 @@
 
 *Inspired by the [Chrome extension](https://github.com/tim-sha256/chess.com-anti-cheat) by Tim Sh*
 
+---
+
+> 🇹🇭 **Fun Fact:** The project name **"Mailen"** (ไม่เล่น) comes from Thai:
+> - **ไม่ (Mai)** = No / Don't
+> - **เล่น (Len)** = Play
+> 
+> Together it means **"Don't Play"** — a fitting name for an anti-cheat tool! 🎯
+
 </div>
 
 ---
