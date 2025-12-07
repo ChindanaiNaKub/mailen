@@ -221,15 +221,39 @@
             return;
         }
 
-        // Find the best parent container
-        let targetParent = opponentEl.closest('.board-player-default-top, .board-layout-player-top');
-        if (!targetParent) {
-            // Try to find a suitable parent
-            targetParent = opponentEl.parentElement?.parentElement || opponentEl.parentElement;
-        }
-        if (!targetParent) return;
+        // Find the best insertion point - after all player info elements
+        let insertTarget = opponentEl;
 
-        badgeElement = document.createElement('div');
+        // Try to find the connection component or the last element in the player row
+        // Look up multiple levels to find the player info container
+        let playerContainer = opponentEl.parentElement;
+        for (let i = 0; i < 3 && playerContainer; i++) {
+            // Check if this container has connection component
+            const connectionEl = playerContainer.querySelector('.connection-component, [class*="connection-component"]');
+            if (connectionEl) {
+                insertTarget = connectionEl;
+                break;
+            }
+
+            // Check for flag (usually the last visible element in player row)
+            const flagEl = playerContainer.querySelector('[class*="country-flag"], [class*="flag"], .flag');
+            if (flagEl) {
+                insertTarget = flagEl;
+                break;
+            }
+
+            playerContainer = playerContainer.parentElement;
+        }
+
+        // If we still have opponentEl as target, find the last sibling
+        if (insertTarget === opponentEl && opponentEl.parentElement) {
+            const siblings = opponentEl.parentElement.children;
+            if (siblings.length > 0) {
+                insertTarget = siblings[siblings.length - 1];
+            }
+        }
+
+        badgeElement = document.createElement('span');
         badgeElement.id = 'chess-anticheat-badge';
         badgeElement.className = 'chess-anticheat-badge under-username';
 
@@ -243,9 +267,8 @@
 
         badgeElement.title = `Risk Score: ${score}\nFormat: ${data.maxScore.format || 'N/A'}\nAccount Age: ${data.accountAgeDays} days`;
 
-        targetParent.style.position = 'relative';
-        targetParent.style.overflow = 'visible';
-        targetParent.appendChild(badgeElement);
+        // Insert the badge right after the connection component (or username if not found)
+        insertTarget.insertAdjacentElement('afterend', badgeElement);
 
         console.log('Chess.com Anti-Cheat: Badge displayed for', data.username || 'opponent');
     }

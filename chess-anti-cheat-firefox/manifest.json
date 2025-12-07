@@ -28,8 +28,14 @@
             "matches": [
                 "https://www.chess.com/game/*",
                 "https://www.chess.com/game/live/*",
+                "https://www.chess.com/game/daily/*",
                 "https://www.chess.com/play/*",
-                "https://www.chess.com/live/*"
+                "https://www.chess.com/live/*",
+                "https://www.chess.com/analysis/*",
+                "https://www.chess.com/analysis/game/*",
+                "https://www.chess.com/games/archive/*",
+                "https://www.chess.com/games/view/*",
+                "https://www.chess.com/callback/*"
             ],
             "js": [
                 "content/content.js"
