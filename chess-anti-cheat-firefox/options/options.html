@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess.com Anti-Cheat Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+    <div class="options-container">
+        <header class="header">
+            <h1>♔ Anti-Cheat Settings</h1>
+            <p>Configure how the extension analyzes opponents</p>
+        </header>
+
+        <main class="settings-content">
+            <!-- Analysis Settings -->
+            <section class="settings-section">
+                <h2>Analysis Settings</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="rated-only">Rated Games Only</label>
+                        <p class="setting-desc">Only consider rated games when calculating risk score</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="rated-only" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="auto-popup">Auto-Open Popup</label>
+                        <p class="setting-desc">Automatically open popup when opponent is detected</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="auto-popup" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="show-badge">Show In-Page Badge</label>
+                        <p class="setting-desc">Display risk score badge directly on chess.com</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="show-badge" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Threshold Settings -->
+            <section class="settings-section">
+                <h2>Risk Thresholds</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="moderate-threshold">Moderate Risk Threshold</label>
+                        <p class="setting-desc">Score above this is considered moderate risk</p>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="moderate-threshold" min="20" max="60" value="50">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="high-threshold">High Risk Threshold</label>
+                        <p class="setting-desc">Score above this is considered high risk</p>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="high-threshold" min="50" max="90" value="70">
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="settings-section about-section">
+                <h2>About</h2>
+                <p>Chess.com Opponent Risk Score Extension v1.0.0</p>
+                <p class="about-desc">
+                    This extension helps detect potential cheaters by analyzing opponent statistics
+                    using Chess.com's public API. The risk score is calculated based on win rates,
+                    accuracy, and account age.
+                </p>
+                <p class="disclaimer">
+                    ⚠️ Note: A high risk score does not definitively indicate cheating.
+                    Use this as one of many factors in your assessment.
+                </p>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <button id="save-btn" class="btn btn-primary">Save Settings</button>
+            <button id="reset-btn" class="btn btn-secondary">Reset to Defaults</button>
+        </footer>
+
+        <div id="toast" class="toast hidden">Settings saved!</div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

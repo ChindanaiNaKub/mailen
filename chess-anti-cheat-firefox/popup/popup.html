@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess.com Risk Score</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">♔</span>
+                <span class="logo-text">Anti-Cheat</span>
+            </div>
+            <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading State -->
+            <div id="loading-state" class="state-card loading hidden">
+                <div class="spinner"></div>
+                <p>Analyzing opponent...</p>
+            </div>
+
+            <!-- No Opponent State -->
+            <div id="no-opponent-state" class="state-card">
+                <div class="state-icon">🔍</div>
+                <h3>No Opponent Detected</h3>
+                <p>Start or join a game on Chess.com to analyze your opponent.</p>
+            </div>
+
+            <!-- Opponent Analysis -->
+            <div id="opponent-analysis" class="hidden">
+                <!-- Risk Score Card -->
+                <div class="risk-card">
+                    <div class="risk-score-container">
+                        <div id="risk-gauge" class="risk-gauge">
+                            <svg viewBox="0 0 100 50" class="gauge-svg">
+                                <path d="M10 45 A35 35 0 0 1 90 45" class="gauge-bg"/>
+                                <path id="gauge-fill" d="M10 45 A35 35 0 0 1 90 45" class="gauge-fill"/>
+                            </svg>
+                            <div class="gauge-score">
+                                <span id="score-value">0</span>
+                            </div>
+                        </div>
+                        <div id="risk-label" class="risk-label">Analyzing...</div>
+                    </div>
+                    <div class="opponent-info">
+                        <h3 id="opponent-name">Opponent</h3>
+                        <p id="opponent-format" class="format-badge">Blitz</p>
+                    </div>
+                </div>
+
+                <!-- Risk Factors -->
+                <div class="factors-section">
+                    <h4>Risk Factors</h4>
+                    <div class="factors-grid">
+                        <div class="factor-item">
+                            <span class="factor-icon">📈</span>
+                            <div class="factor-details">
+                                <span class="factor-label">Overall Win Rate</span>
+                                <span id="overall-winrate" class="factor-value">--</span>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-icon">🔥</span>
+                            <div class="factor-details">
+                                <span class="factor-label">Recent Win Rate</span>
+                                <span id="recent-winrate" class="factor-value">--</span>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-icon">🎯</span>
+                            <div class="factor-details">
+                                <span class="factor-label">High Accuracy Games</span>
+                                <span id="accuracy-pct" class="factor-value">--</span>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-icon">📅</span>
+                            <div class="factor-details">
+                                <span class="factor-label">Account Age</span>
+                                <span id="account-age" class="factor-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <a id="view-profile" href="#" class="btn btn-secondary" target="_blank">
+                        View Profile
+                    </a>
+                    <button id="refresh-btn" class="btn btn-primary">
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- History Section -->
+        <section class="history-section">
+            <div class="history-header">
+                <h4>Recent Opponents</h4>
+                <button id="clear-history" class="text-btn">Clear</button>
+            </div>
+            <div id="history-list" class="history-list">
+                <p class="empty-history">No opponents analyzed yet</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Chess.com Anti-Cheat v1.0.0</span>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+/**
+ * Chess.com Anti-Cheat Content Script Styles
+ */
+
+/* Risk Badge Container */
+.chess-anticheat-badge {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Risk Score Circle */
+.chess-anticheat-badge .risk-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Risk Label */
+.chess-anticheat-badge .risk-label {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) translateX(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/* Dark mode adjustments (chess.com uses dark theme) */
+@media (prefers-color-scheme: dark) {
+    .chess-anticheat-badge .risk-label {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chess-anticheat-badge {
+        right: 4px;
+    }
+    
+    .chess-anticheat-badge .risk-score {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+    
+    .chess-anticheat-badge .risk-label {
+        display: none;
+    }
+}
