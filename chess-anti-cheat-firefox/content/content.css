@@ -131,3 +131,20 @@
         transform: translateX(0);
     }
 }
+
+/* Pulse animation for loading state */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.chess-anticheat-badge.loading .risk-score {
+    animation: pulse 1s infinite ease-in-out;
+}

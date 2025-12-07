@@ -5,6 +5,30 @@
 
 const API_BASE_URL = 'https://api.chess.com/pub';
 
+// In-memory cache with TTL (5 minutes)
+const apiCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Get cached data or null if expired/missing
+ */
+function getCached(key) {
+    const cached = apiCache.get(key);
+    if (!cached) return null;
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) {
+        apiCache.delete(key);
+        return null;
+    }
+    return cached.data;
+}
+
+/**
+ * Store data in cache
+ */
+function setCache(key, data) {
+    apiCache.set(key, { data, timestamp: Date.now() });
+}
+
 /**
  * Fetch with retry and exponential backoff
  */
@@ -44,9 +68,16 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 100
 }
 
 /**
- * Fetch player profile information
+ * Fetch player profile information (with caching)
  */
 async function fetchPlayerProfile(username) {
+    const cacheKey = `profile_${username.toLowerCase()}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+        console.log('Chess.com Anti-Cheat: Using cached profile for', username);
+        return cached;
+    }
+
     try {
         const response = await fetchWithRetry(`${API_BASE_URL}/player/${username}`);
         if (!response.ok) throw new Error('Failed to fetch player profile');
@@ -56,12 +87,15 @@ async function fetchPlayerProfile(username) {
             throw new Error('Invalid profile data structure');
         }
 
-        return {
+        const result = {
             joined: data.joined,
             username: data.username,
             country: data.country,
             status: data.status
         };
+
+        setCache(cacheKey, result);
+        return result;
     } catch (error) {
         console.error('Error fetching player profile:', error);
         throw error;
@@ -69,9 +103,16 @@ async function fetchPlayerProfile(username) {
 }
 
 /**
- * Fetch player statistics
+ * Fetch player statistics (with caching)
  */
 async function fetchPlayerStats(username) {
+    const cacheKey = `stats_${username.toLowerCase()}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+        console.log('Chess.com Anti-Cheat: Using cached stats for', username);
+        return cached;
+    }
+
     try {
         const response = await fetchWithRetry(`${API_BASE_URL}/player/${username}/stats`);
         if (!response.ok) throw new Error('Failed to fetch player stats');
@@ -91,6 +132,7 @@ async function fetchPlayerStats(username) {
             }
         });
 
+        setCache(cacheKey, stats);
         return stats;
     } catch (error) {
         console.error('Error fetching player stats:', error);
@@ -99,9 +141,16 @@ async function fetchPlayerStats(username) {
 }
 
 /**
- * Fetch recent games for a player
+ * Fetch recent games for a player (with caching)
  */
 async function fetchRecentGames(username) {
+    const cacheKey = `games_${username.toLowerCase()}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+        console.log('Chess.com Anti-Cheat: Using cached games for', username);
+        return cached;
+    }
+
     try {
         const { GAME_RESULTS, DEFAULT_SETTINGS } = window.ChessAntiCheat.config;
 
@@ -163,8 +212,12 @@ async function fetchRecentGames(username) {
                     rated: game.rated
                 };
             })
-            .filter(game => game.result !== 'unknown');
+            .filter(game => game.result !== 'unknown')
+            // OPTIMIZATION: Limit to 50 most recent games for faster processing
+            .slice(-50);
 
+        console.log(`Chess.com Anti-Cheat: Fetched ${games.length} games for analysis`);
+        setCache(cacheKey, games);
         return games;
     } catch (error) {
         console.error('Error fetching recent games:', error);

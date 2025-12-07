@@ -177,6 +177,9 @@
      * Analyze opponent by sending message to background script
      */
     async function analyzeOpponent(username) {
+        // Show loading indicator immediately so user knows it's working
+        displayLoadingBadge();
+
         try {
             const response = await browser.runtime.sendMessage({
                 action: 'analyzeOpponent',
@@ -185,10 +188,71 @@
 
             if (response && !response.error) {
                 displayRiskBadge(response);
+            } else {
+                removeBadge(); // Remove loading badge on error
             }
         } catch (error) {
             console.error('Chess.com Anti-Cheat: Error analyzing opponent:', error);
+            removeBadge();
         }
+    }
+
+    /**
+     * Display loading badge while analysis is in progress
+     */
+    function displayLoadingBadge() {
+        removeBadge();
+
+        // Find opponent name element
+        let opponentEl = document.querySelector(
+            '.board-player-default-top .cc-user-username-component, ' +
+            '.board-player-default-top .user-username-component, ' +
+            '.board-layout-player-top .cc-user-username-component, ' +
+            '.board-layout-player-top .user-username-component'
+        );
+
+        if (!opponentEl && lastOpponent) {
+            const allUsernames = document.querySelectorAll('.cc-user-username-component, .user-username-component');
+            for (const el of allUsernames) {
+                if (el.textContent?.trim() === lastOpponent) {
+                    opponentEl = el;
+                    break;
+                }
+            }
+        }
+
+        if (!opponentEl) return;
+
+        // Find insertion point
+        let insertTarget = opponentEl;
+        let playerContainer = opponentEl.parentElement;
+        for (let i = 0; i < 3 && playerContainer; i++) {
+            const connectionEl = playerContainer.querySelector('.connection-component, [class*="connection-component"]');
+            if (connectionEl) {
+                insertTarget = connectionEl;
+                break;
+            }
+            playerContainer = playerContainer.parentElement;
+        }
+
+        if (insertTarget === opponentEl && opponentEl.parentElement) {
+            const siblings = opponentEl.parentElement.children;
+            if (siblings.length > 0) {
+                insertTarget = siblings[siblings.length - 1];
+            }
+        }
+
+        badgeElement = document.createElement('span');
+        badgeElement.id = 'chess-anticheat-badge';
+        badgeElement.className = 'chess-anticheat-badge under-username loading';
+
+        badgeElement.innerHTML = `
+            <span class="risk-score" style="background-color: #888888; animation: pulse 1s infinite;">...</span>
+            <span class="risk-label">Analyzing</span>
+        `;
+
+        badgeElement.title = 'Analyzing opponent...';
+        insertTarget.insertAdjacentElement('afterend', badgeElement);
     }
 
     /**
